@@ -1,0 +1,153 @@
+/**
+ * A simple linked list object. Its nodes are defined as an inner class.
+ * 
+ * COMP 271 FINAL ASSIGNMENT
+ */
+public class SimpleLinkedList {
+
+    /**
+     * Inner class for Node. Node fields can be accessed directly, for simplicity of
+     * code.
+     */
+    class Node {
+        String data;
+        Node next;
+
+        /** Simple string representation for Node */
+        public String toString() {
+            return this.data;
+        } // method Node.toString
+    } // inner class Node
+
+    /** The only field in class SimpleLinkedList */
+    Node head;
+
+    /**
+     * Add a new node to the linked list
+     */
+    public void add(String data) {
+        Node newNode = new Node();
+        newNode.data = data;
+        if (this.head == null) {
+            this.head = newNode;
+        } else {
+            // Traverse the list to find the last node
+            Node current = this.head;
+            while (current.next != null) {
+                current = current.next;
+            }
+            // current is now the last node in the list
+            current.next = newNode;
+        }
+    } // method add
+
+    /**
+     * Find and return the middle node of the linked list.
+     * 
+     * This implementation uses the slow and fast pointer technique to traverse the
+     * list only once.
+     * 
+     * - The slow pointer moves one step at a time.
+     * - The fast pointer moves two steps at a time.
+     * - When the fast pointer reaches the end, the slow pointer will be at the middle.
+     * - If the list is empty (head == null), return null.
+     */
+    public Node findMiddle() {
+        if (head == null) {
+            return null; // No nodes in the list, return null
+        }
+
+        Node slow = head; // Slow pointer starts at the head
+        Node fast = head; // Fast pointer also starts at the head
+
+        // Traverse the list
+        while (fast != null && fast.next != null) {
+            slow = slow.next;       // Slow pointer moves one step forward
+            fast = fast.next.next;  // Fast pointer moves two steps forward
+        }
+
+        // By the time fast pointer reaches the end, slow pointer will be at the middle
+        return slow; // Return the middle node
+    } // method SimpleLinkedList.findMiddle
+
+    /**
+     * Invert a linked list.
+     * 
+     * This implementation reverses the list in-place while traversing it once.
+     * 
+     * Steps:
+     * - Use a `prev` pointer to track the previous node (initially null).
+     * - Traverse the list, updating each node's `next` pointer to point to `prev`.
+     * - At the end, the last node becomes the head of the inverted list.
+     * - Return the inverted list as a new SimpleLinkedList.
+     */
+    public SimpleLinkedList invert() {
+        // Create a new SimpleLinkedList to hold the inverted list
+        SimpleLinkedList invertedList = new SimpleLinkedList();
+
+        Node current = head; // Start with the head of the current list
+        Node prev = null;    // Previous node starts as null (no nodes before the head)
+
+        // Traverse the list
+        while (current != null) {
+            Node nextNode = current.next; // Temporarily store the next node
+            current.next = prev;         // Reverse the current node's `next` pointer
+            prev = current;              // Move the `prev` pointer to the current node
+            current = nextNode;          // Move to the next node in the original list
+        }
+
+        // The last node processed (stored in `prev`) becomes the new head of the inverted list
+        invertedList.head = prev; 
+
+        return invertedList; // Return the inverted list
+    } // method SimpleLinkedList.invert
+
+    /** String representation for the simple linked list */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (this.head != null) {
+            Node current = this.head;
+            while (current != null) {
+                sb.append(String.format("%s", current.data));
+                current = current.next;
+            }
+        }
+        return sb.toString();
+    } // method SimpleLinkedList.toString
+
+    /**
+     * Driver/test code.
+     */
+    public static void main(String[] args) {
+        SimpleLinkedList demo = new SimpleLinkedList();
+        boolean test1 = demo.findMiddle() == null;
+        demo.add("A");
+        boolean test2 = demo.findMiddle().data.equals("A");
+        demo.add("B");
+        boolean test3 = demo.findMiddle().data.equals("A");
+        demo.add("C");
+        boolean test4 = demo.findMiddle().data.equals("B");
+        demo.add("D");
+        demo.add("E");
+        boolean test5 = demo.findMiddle().data.equals("C");
+        boolean success = test1 && test2 && test3 && test4 && test5;
+        if (success) {
+            System.out.println("Method findMiddle works as specified.");
+        } else {
+            System.out.println("Method findMiddle not working as specified.");
+        }
+        String left = demo.toString();
+        String right = demo.invert().toString();
+        boolean test10 = left.length() == right.length();
+        for (int i = 0; i < left.length(); i++) {
+            test10 = test10
+                    && left.charAt(i) == right.charAt(right.length() - 1 - i);
+        }
+        if (test10) {
+            System.out.println("Method invert works as specified.");
+        } else {
+            System.out.println("Method invert not working as specified.");
+        }
+    } // method SimpleLinkedList.main
+
+} // class SimpleLinkedList
